@@ -4,14 +4,12 @@ from .models import MeetingRoom, Booking, History
 
 
 class MeetingRoomSerializer(serializers.ModelSerializer):
-    """Serializer for MeetingRoom model"""
     class Meta:
         model = MeetingRoom
         fields = ['id', 'name', 'capacity', 'description', 'is_active']
 
 
 class HistorySerializer(serializers.ModelSerializer):
-    """Serializer for History model"""
     user_name = serializers.SerializerMethodField()
 
     class Meta:
@@ -26,7 +24,6 @@ class HistorySerializer(serializers.ModelSerializer):
 
 
 class BookingSerializer(serializers.ModelSerializer):
-    """Serializer for Booking model"""
     meeting_room_name = serializers.CharField(
         source='meeting_room.name', 
         read_only=True
@@ -47,7 +44,6 @@ class BookingSerializer(serializers.ModelSerializer):
         return obj.user.username if obj.user else 'Anonymous'
 
     def validate(self, data):
-        """Validate booking data"""
         start_time = data.get('start_time')
         end_time = data.get('end_time')
         meeting_room = data.get('meeting_room')
@@ -85,7 +81,6 @@ class BookingSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        """Create booking and log history"""
         # Set user from context if available
         request = self.context.get('request')
         if request and request.user.is_authenticated:
@@ -105,13 +100,11 @@ class BookingSerializer(serializers.ModelSerializer):
 
 
 class BookingCreateSerializer(serializers.Serializer):
-    """Simplified serializer for creating bookings"""
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
     purpose = serializers.CharField(required=False, allow_blank=True)
 
     def validate(self, data):
-        """Validate booking data"""
         start_time = data.get('start_time')
         end_time = data.get('end_time')
 
@@ -129,7 +122,6 @@ class BookingCreateSerializer(serializers.Serializer):
 
 
 class AvailableRoomSerializer(serializers.ModelSerializer):
-    """Serializer for available rooms listing"""
     class Meta:
         model = MeetingRoom
         fields = ['id', 'name', 'capacity', 'description']
